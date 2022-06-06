@@ -1,3 +1,39 @@
+# esbuild-mix-tsc-loader
+
+Forked from [`esbuild-loader`](https://github.com/privatenumber/esbuild-loader)
+
+###### Changes in this fork
+
+- Add a new argument `emitDecoratorMetadata` in Configuration
+
+```diff
+  {
+      test: /\.tsx?$/,
+      loader: 'esbuild-loader',
+      options: {
+          loader: 'tsx',
+          target: 'es2015',
++         emitDecoratorMetadata: true, // transform by tsc provide emitDecoratorMetadata
+      }
+  }
+```
+
+- Add a new argument `modules` in Configuration
+```diff
+  {
+      test: /\.tsx?$/,
+      loader: 'esbuild-loader',
+      options: {
+          loader: 'tsx',
+          target: 'es2015',
++         modules:['@automapper/classes','@automapper/core'] // transform by tsc provide emitDecoratorMetadata if in file import xx from '@automapper/core'
+      }
+  }
+```
+
+<details>
+<summary>Original README</summary>
+
 # esbuild-loader <a href="https://npm.im/esbuild-loader"><img src="https://badgen.net/npm/v/esbuild-loader"></a> <a href="https://npm.im/esbuild-loader"><img src="https://badgen.net/npm/dm/esbuild-loader"></a> <a href="https://packagephobia.now.sh/result?p=esbuild-loader"><img src="https://packagephobia.now.sh/badge?p=esbuild-loader"></a>
 
 Speed up your Webpack build with [esbuild](https://github.com/evanw/esbuild)! 🔥
@@ -414,3 +450,5 @@ Webpack-integrated Mocha test-runner with Webpack 5 support.
 
 #### [webpack-localize-assets-plugin](https://github.com/privatenumber/webpack-localize-assets-plugin)
 Localize/i18nalize your Webpack build. Optimized for multiple locales!
+
+</details>

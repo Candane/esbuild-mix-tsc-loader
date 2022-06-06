@@ -13,6 +13,8 @@ type Except<ObjectType, Properties> = {
 type LoaderOptions = Except<TransformOptions, 'sourcemap' | 'sourcefile'> & {
 	/** Pass a custom esbuild implementation */
 	implementation?: Implementation;
+	emitDecoratorMetadata?:boolean;
+	modules?:Array<string>;
 };
 
 type MinifyPluginOptions = Except<TransformOptions, 'sourcefile'> & {

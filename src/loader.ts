@@ -5,6 +5,8 @@ import { getOptions } from 'loader-utils';
 import webpack from 'webpack';
 import JoyCon, { LoadResult } from 'joycon';
 import JSON5 from 'json5';
+import typescript, { TranspileOptions } from 'typescript';
+import stripComments from 'strip-comments';
 import { LoaderOptions } from './interfaces';
 
 const joycon = new JoyCon();
@@ -17,14 +19,48 @@ joycon.addLoader({
 			return JSON5.parse(config);
 		} catch (error: any) {
 			throw new Error(
-				`Failed to parse tsconfig at ${path.relative(process.cwd(), filePath)}: ${error.message as string}`,
+				`Failed to parse tsconfig at ${path.relative(
+					process.cwd(),
+					filePath,
+				)}: ${error.message as string}`,
 			);
 		}
 	},
 });
 
 const isTsExtensionPtrn = /\.ts$/i;
+const isDecorators = /\s@\w+/;
+const isImport = /\sfrom\s+['"](.*)['"]/g;
+const isDynamicImport = /\s(?:import|require)\s*\(['"](.*)['"]\)/g;
+const isImportString = /['"]/;
+
 let tsConfig: LoadResult;
+
+function importModules(source: string, modules: Array<string>): boolean {
+	if (!Array.isArray(modules) || modules.length <= 0) { return false; }
+	const matchImport = source.match(isImport) ?? [];
+	const matchDynamicImport = source.match(isDynamicImport) ?? [];
+	if (matchImport.length > 0) {
+		for (const importString of matchImport) {
+			const splitString = importString.match(isImportString)[0];
+			const pack = importString.split(splitString)[1];
+			if (modules.includes(pack)) {
+				return true;
+			}
+		}
+	}
+	if (matchDynamicImport.length > 0) {
+		for (const importString of matchDynamicImport) {
+			const splitString = importString.match(isImportString)[0];
+			const pack = importString.split(splitString)[1];
+			if (modules.includes(pack)) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
 
 async function ESBuildLoader(
 	this: webpack.loader.LoaderContext,
@@ -34,6 +70,8 @@ async function ESBuildLoader(
 	const options: LoaderOptions = getOptions(this);
 	const {
 		implementation,
+		emitDecoratorMetadata,
+		modules,
 		...esbuildTransformOptions
 	} = options;
 
@@ -74,11 +112,27 @@ async function ESBuildLoader(
 		transformOptions.loader = 'ts';
 	}
 
-	try {
-		const { code, map } = await transform(source, transformOptions);
-		done(null, code, map && JSON.parse(map));
-	} catch (error: unknown) {
-		done(error as Error);
+	if (
+		(emitDecoratorMetadata
+			&& isDecorators.test(stripComments(source)))
+		|| (modules && importModules(source, modules))
+	) {
+		try {
+			const { outputText, sourceMapText } = typescript.transpileModule(
+				source,
+				tsConfig as TranspileOptions,
+			);
+			done(null, outputText, sourceMapText);
+		} catch (error: unknown) {
+			done(error as Error);
+		}
+	} else {
+		try {
+			const { code, map } = await transform(source, transformOptions);
+			done(null, code, map && JSON.parse(map));
+		} catch (error: unknown) {
+			done(error as Error);
+		}
 	}
 }
 

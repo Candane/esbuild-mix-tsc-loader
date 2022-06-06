@@ -1,20 +1,21 @@
 {
-	"name": "esbuild-loader",
-	"version": "0.0.0-semantic-release",
-	"description": "⚡️ Speed up your Webpack build with esbuild",
+	"name": "esbuild-mix-tsc-loader",
+	"version": "0.0.1-semantic-release",
+	"description": "⚡️ build with esbuild and emitDecoratorMetadata by tsc",
 	"keywords": [
 		"esbuild",
 		"webpack",
 		"loader",
 		"typescript",
-		"esnext"
+		"esnext",
+		"emitDecoratorMetadata"
 	],
 	"license": "MIT",
-	"repository": "privatenumber/esbuild-loader",
-	"funding": "https://github.com/privatenumber/esbuild-loader?sponsor=1",
+	"repository": "Candane/esbuild-mix-tsc-loader",
+	"funding": "https://github.com/Candane/esbuild-mix-tsc-loader?sponsor=1",
 	"author": {
-		"name": "Hiroki Osame",
-		"email": "hiroki.osame@gmail.com"
+		"name": "peigo",
+		"email": "candane@126.com"
 	},
 	"files": [
 		"dist"
@@ -45,6 +46,7 @@
 		"joycon": "^3.0.1",
 		"json5": "^2.2.0",
 		"loader-utils": "^2.0.0",
+		"strip-comments": "^2.0.1",
 		"tapable": "^2.2.0",
 		"webpack-sources": "^2.2.0"
 	},
