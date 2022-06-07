@@ -1,6 +1,6 @@
 {
 	"name": "esbuild-mix-tsc-loader",
-	"version": "0.0.1-semantic-release",
+	"version": "1.0.0",
 	"description": "⚡️ build with esbuild and emitDecoratorMetadata by tsc",
 	"keywords": [
 		"esbuild",

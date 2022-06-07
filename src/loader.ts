@@ -120,7 +120,7 @@ async function ESBuildLoader(
 		try {
 			const { outputText, sourceMapText } = typescript.transpileModule(
 				source,
-				tsConfig as TranspileOptions,
+				tsConfig.data as TranspileOptions,
 			);
 			done(null, outputText, sourceMapText);
 		} catch (error: unknown) {
